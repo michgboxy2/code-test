@@ -22,7 +22,7 @@ module.exports = {
           'location.latLng.lat': data.location.latLng.lat,
         },
         {
-          [{ start: { $gte: data.start } }, { end: { $lte: data.end } }],
+          start: { $gte: data.start } }, { end: { $lte: data.end },
         },
       ],
     });

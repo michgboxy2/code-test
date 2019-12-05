@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 
-const { Schema } = mongoose;
+const { Schema, model, connect } = mongoose;
+const {mongoURI} = require('../config');
+
+connect(mongoURI, {useNewUrlParser: true});
 
 const EventSchema = new Schema(
   {
@@ -23,4 +26,4 @@ const EventSchema = new Schema(
 
 
 
-module.exports = Event;
+module.exports = model('event', EventSchema);
