@@ -13,6 +13,8 @@ app.use(
   }),
 );
 
+app.use('/', eventRoutes);
+
 
 
 const PORT = process.env.PORT || 5000;
