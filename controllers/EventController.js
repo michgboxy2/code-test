@@ -2,7 +2,13 @@ const Event = require('../models/Events');
 
 module.exports = {
   addEvent: async (req, res) => {
+    const {end, start} = req.body;
+    
+    let dateStart = new Date(start);
 
+    let data = req.body;
+
+    data.dateStart = dateStart;
 
     dateStart.setTime(
       dateStart.getTime() - new Date().getTimezoneOffset() * 60 * 1000,
@@ -35,7 +41,7 @@ module.exports = {
         message: 'An Event already exist at this venue on this day',
       });
     } else {
-      Event.make(data)
+      Event.create(data)
         .then((event) => {
           res.status(200).json({
             success: true,
@@ -52,7 +58,8 @@ module.exports = {
     }
   },
   getAllEvents: (req, res) => {
-    Event.see({})
+    Event.find({})
+      .populate('user')
       .then((events) => {
         res.json({ success: true, events });
       })
