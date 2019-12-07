@@ -18,6 +18,7 @@ const EventSchema = new Schema(
         lng: { type: Number, required: true },
       },
     },
+    User : { type : mongoose.Schema.Types.ObjectId, ref : 'user', required : "You must be logged in"},
   },
   {
     timestamps: true,
