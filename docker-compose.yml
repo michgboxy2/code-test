@@ -1,0 +1,28 @@
+version: '3.6'
+
+services:
+  database:
+    image: 'mongo'
+    container_name: 'code-test-mongo-container'
+    environment:
+      - MONGO_INITDB_DATABASE=code-test
+      - MONGO_INITDB_ROOT_USERNAME=user
+      -MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./mongo-volume:/data/db
+    ports:
+      - '27017-27019:27017-27019'
+
+  app:
+    container_name: code-test
+    build: ./
+    command: npm start
+    working_dir: /usr/src/code-test
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./:/usr/src/code-test
+      - ./usr/src/calipsa/node_modules
+
+      
