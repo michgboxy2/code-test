@@ -11,6 +11,10 @@ var mongoose 		= require('mongoose'),
 
  exports.RegisterUser = async (req, res, next) => {
  	try{
+         const {email, password} = req.body;
+         if(!email || !password){
+             return res.status(403).send({message : "please enter both email and password field"});
+         }
         var user = new Usermodel(req.body);
 
         let data = await user.save();
