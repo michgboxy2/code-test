@@ -17,7 +17,8 @@ var UserSchema = new Schema({
 			lowercase : true, 
 			required : "please enter your email", 
 			validate : [validator.isEmail, "Invalid Email Address"]}),
-	password : ({ type : String, required : "please enter password"})
+	
+			password : ({ type : String, required : "please enter password"})
 
 });
 
