@@ -1,6 +1,10 @@
+"use strict";
+
 var mongoose 		= require('mongoose'),
- 		auth		= require("../userAuth/userauth.js"),
- 	 Usermodel 		= require("../models/Users");
+         auth		= require("../auth/Auth"),
+         Event      = require("../models/Events"),
+      Usermodel 		= require("../models/Users");
+      
 
 
 
@@ -21,7 +25,28 @@ var mongoose 		= require('mongoose'),
    
 
      }catch(e){
-         return res.status(422).send({status : false, message : "something went wrong"});
+         return res.status(422).send({status : e, message : "something went wrong"});
      }
 
+ }
+
+ exports.getUserByEmail = async (req, res, next) => {
+     try{
+         const {email} = req.params;
+         
+         if(!email){return res.status(403).send({message : "please enter an email", status : "failed"});}
+
+         let user = await Usermodel.findOne({email}).populate('event');
+
+         if(user){ 
+             var data = await Event.find({User : user._id});
+            };
+
+            let result = {user, events : data};
+    
+         user ? res.status(200).send(result) : res.status(404).send({message : "user not found"});
+
+     }catch(e){
+        return res.status(422).send({status : e, message : "something went wrong"});
+     }
  }
