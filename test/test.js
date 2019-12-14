@@ -22,13 +22,13 @@ describe("User and Event endpoints", function() {
       .set("Content-Type", "Application/json")
       .expect(200);
 
-      JSON.parse(userLogin.text).should.have.property('_token');
+    JSON.parse(userLogin.text).should.have.property("_token");
 
     _token = JSON.parse(userLogin.text)._token;
   });
-  it.skip("should create a user", done => {
+  it("should create a user", done => {
     const data = {
-      email: "user5@gmail.com",
+      email: "user7@gmail.com",
       password: "password"
     };
 
@@ -45,8 +45,8 @@ describe("User and Event endpoints", function() {
       });
   });
 
-  it.skip("should get a user details and events via an email search", async function() {
-    const email = "michgboxy@gmail.com";
+  it("should get a user details and events via an email search", async function() {
+    const email = "user@gmail.com";
 
     let data = await request(app)
       .get(`/user/${email}`)
@@ -69,23 +69,21 @@ describe("User and Event endpoints", function() {
       .send(req)
       .set("Content-Type", "Application/json")
       .expect(200);
-    JSON.parse(userLogin.text).should.have.property('_token');
+    JSON.parse(userLogin.text).should.have.property("_token");
     expect(JSON.parse(data.text)._token).to.be.a("string");
-
   });
 
   it("should return status failed if both login input is not passed", async () => {
-    let req = { email: "user@gmail.com"};
+    let req = { email: "user@gmail.com" };
 
     let data = await request(app)
-                        .post('/login')
-                        .send(req)
-                        .expect(403);
-              expect(JSON.parse(data.text).status).to.be.equal("failed");
-  })
+      .post("/login")
+      .send(req)
+      .expect(403);
+    expect(JSON.parse(data.text).status).to.be.equal("failed");
+  });
 
-  it.skip("should get all the events of a signed in user", async function() {
-
+  it("should get all the events of a signed in user", async function() {
     let data = await request(app)
       .get(`/event/user`)
       .set({ Authorization: `Bearer ${_token}` })
@@ -94,13 +92,12 @@ describe("User and Event endpoints", function() {
     expect(JSON.parse(data.text)).to.be.an("array");
   });
 
-  it.skip("should create an event", async () => {
-
+  it("should create an event", async () => {
     let data = {
       location: {
         latLng: {
-          lng: -77.12456718,
-          lat: 38.8978893986
+          lng: -77.598718,
+          lat: 38.186986
         },
         address: "Nigeria"
       },
@@ -109,7 +106,6 @@ describe("User and Event endpoints", function() {
       title: "The lion and the jewel",
       details: "Barooka, Baale of ilujinle stage play"
     };
-    const { _token } = JSON.parse(userLogin.text);
 
     let Event = await request(app)
       .post("/event")
@@ -121,12 +117,38 @@ describe("User and Event endpoints", function() {
     expect(JSON.parse(Event.text)).to.be.an("object");
   });
 
-  it("should get all event", async() => {
-      let events = await request(app)
-                                .get('/event')
-                                .expect(200);
-      expect(JSON.parse(events.text)).to.be.an("object");
-      expect(JSON.parse(events.text).success).to.be.equal(true);
-        
-  })
+  it("should get all event", async () => {
+    let events = await request(app)
+      .get("/event")
+      .expect(200);
+    expect(JSON.parse(events.text)).to.be.an("object");
+    expect(JSON.parse(events.text).success).to.be.equal(true);
+  });
+
+  it("should reject a duplicate event creation", async () => {
+    let data = {
+      location: {
+        latLng: {
+          lng: -77.03609,
+          lat: 38.89587
+        },
+        address: "lagos, Nigeria"
+      },
+      start: "2019-11-05",
+      end: "2020-12-05",
+      title: "The lion and the jewel",
+      details: "Barooka, Baale of ilujinle"
+    };
+
+    let Event = await request(app)
+      .post("/event")
+      .send(data)
+      .set({ Authorization: `Bearer ${_token}` })
+      .set("Content-Type", "Application/json")
+      .expect(500);
+
+    expect(JSON.parse(Event.text)).to.be.an("object");
+    expect(JSON.parse(Event.text).success).to.be.equal(false);
+  });
 });
+
