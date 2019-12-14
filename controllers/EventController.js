@@ -14,6 +14,7 @@ module.exports = {
       dateStart.getTime() - new Date().getTimezoneOffset() * 60 * 1000,
     );
     data.start = dateStart;
+    data.User = req.user._id;
 
     const dateEnd = new Date(data.end);
     dateEnd.setTime(
@@ -59,7 +60,7 @@ module.exports = {
   },
   getAllEvents: (req, res) => {
     Event.find({})
-      .populate('user')
+      .populate('User')
       .then((events) => {
         res.json({ success: true, events });
       })
@@ -71,4 +72,32 @@ module.exports = {
         });
       });
   },
+
+  findOneUserEvent : async (req, res, next) => {
+    try{
+      const {id} = req.params;
+      if(!id){return res.status(403).send({message : "please enter the user id", status : "failed"});}
+  
+      let data = await Event.find({User : id});
+      data ? res.status(200).send(data) : res.status(400).send({data : [], status : "User events not found"});
+    }catch(e){
+      return res.start(422).send({message : e, status : "failed"});
+    }
+  },
+  
+  getSignInUserEvent : async (req, res, next) => {
+    try{
+      const {_id} = req.user;
+      if(!_id){return res.status(403).send({message : "please enter the user id", status : "failed"});}
+  
+      let data = await Event.find({User : _id});
+
+      data ? res.status(200).send(data) : res.status(400).send({data : [], status : "User events not found"});
+  
+    }catch(e){
+      return res.start(422).send({message : e, status : "failed"});
+    }
+  }
 };
+
+
